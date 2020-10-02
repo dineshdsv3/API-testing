@@ -134,6 +134,42 @@ describe('Tasks API', () => {
 	});
 
 	// Test the PATCH route
+
+	describe('PATCH /api/tasks/:id', () => {
+		it('It should PATCH an existing task', (done) => {
+			const taskId = 1;
+			const task = {
+				name: 'Task 1 patch',
+			};
+			chai.request(server)
+				.patch('/api/tasks/' + taskId)
+				.send(task)
+				.end((err, response) => {
+					response.should.have.status(200);
+					response.body.should.be.a('object');
+					response.body.should.have.property('id').eq(1);
+					response.body.should.have.property('name').eq('Task 1 patch');
+					response.body.should.have.property('completed').eq(true);
+					done();
+				});
+		});
+
+		it('It should NOT PATCH an existing task with a name with less than 3 characters', (done) => {
+			const taskId = 1;
+			const task = {
+				name: 'Ta',
+			};
+			chai.request(server)
+				.patch('/api/tasks/' + taskId)
+				.send(task)
+				.end((err, response) => {
+					response.should.have.status(400);
+					response.text.should.be.eq('The name should be at least 3 chars long!');
+					done();
+				});
+		});
+	});
+
 	// Test the DELETE route
 	describe('DELETE /api/tasks/:id', () => {
 		it('It should DELETE an existing task', (done) => {
