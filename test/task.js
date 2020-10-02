@@ -135,4 +135,26 @@ describe('Tasks API', () => {
 
 	// Test the PATCH route
 	// Test the DELETE route
+	describe('DELETE /api/tasks/:id', () => {
+		it('It should DELETE an existing task', (done) => {
+			const taskId = 1;
+			chai.request(server)
+				.delete('/api/tasks/' + taskId)
+				.end((err, response) => {
+					response.should.have.status(200);
+					done();
+				});
+		});
+
+		it('It should NOT DELETE a task that is not in the database', (done) => {
+			const taskId = 145;
+			chai.request(server)
+				.delete('/api/tasks/' + taskId)
+				.end((err, response) => {
+					response.should.have.status(404);
+					response.text.should.be.eq('The task with the provided ID does not exist.');
+					done();
+				});
+		});
+	});
 });
