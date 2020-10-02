@@ -95,6 +95,44 @@ describe('Tasks API', () => {
 	});
 
 	// Test the PUT route
+
+	describe('PUT /api/tasks/:id', () => {
+		it('It should PUT an existing task', (done) => {
+			const taskId = 1;
+			const task = {
+				name: 'Task 1 changed',
+				completed: true,
+			};
+			chai.request(server)
+				.put('/api/tasks/' + taskId)
+				.send(task)
+				.end((err, response) => {
+					response.should.have.status(200);
+					response.body.should.be.a('object');
+					response.body.should.have.property('id').eq(1);
+					response.body.should.have.property('name').eq('Task 1 changed');
+					response.body.should.have.property('completed').eq(true);
+					done();
+				});
+		});
+
+		it('It should NOT PUT an existing task with a name with less than 3 characters', (done) => {
+			const taskId = 1;
+			const task = {
+				name: 'Ta',
+				completed: true,
+			};
+			chai.request(server)
+				.put('/api/tasks/' + taskId)
+				.send(task)
+				.end((err, response) => {
+					response.should.have.status(400);
+					response.text.should.be.eq('The name should be at least 3 chars long!');
+					done();
+				});
+		});
+	});
+
 	// Test the PATCH route
 	// Test the DELETE route
 });
